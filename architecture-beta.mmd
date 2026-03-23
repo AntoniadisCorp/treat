@@ -1,0 +1,23 @@
+architecture-beta
+    service browser(internet)[Browser]
+
+    group ng(server)[Angular 17 Zoneless OnPush]
+    service comp(server)[Components] in ng
+    service apisvc(server)[ApiService] in ng
+    service eden(server)[Eden Client RxJS] in ng
+
+    group elysia(cloud)[Elysia Server Bun Runtime]
+    service apiroutes(server)[API Routes] in elysia
+    service ssrengine(server)[SSR CommonEngine] in elysia
+    service staticfiles(disk)[Static Files dist] in elysia
+
+    service surrealdb(database)[SurrealDB HTML Cache]
+
+    browser:R --> L:comp
+    comp:B -- T:apisvc
+    apisvc:R -- L:eden
+    eden:R --> L:apiroutes
+    apiroutes:B -- T:ssrengine
+    ssrengine:R --> L:surrealdb
+    browser:B --> T:ssrengine
+    staticfiles:T -- B:ssrengine

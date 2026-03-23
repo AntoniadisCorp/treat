@@ -1,0 +1,42 @@
+{
+  "name": "treaty",
+  "version": "0.0.1",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "smoke:auth": "pwsh -NoProfile -ExecutionPolicy Bypass -File ./scripts/smoke-auth-routes.ps1",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "@angular/animations": "^17.2.1",
+    "@angular/common": "^17.2.1",
+    "@angular/compiler": "^17.2.1",
+    "@angular/core": "^17.2.1",
+    "@angular/forms": "^17.2.1",
+    "@angular/platform-browser": "^17.2.1",
+    "@angular/platform-browser-dynamic": "^17.2.1",
+    "@angular/platform-server": "^17.2.1",
+    "@angular/router": "^17.2.1",
+    "@angular/ssr": "^17.2.0",
+    "@better-auth/infra": "^0.1.12",
+    "@elysiajs/cors": "^1.4.1",
+    "@elysiajs/eden": "^0.8.1",
+    "better-auth": "^1.5.6",
+    "elysia": "^0.8.16",
+    "ngxtension": "^2.0.0",
+    "rxjs": "~7.8.0",
+    "surrealdb.node": "^0.3.0",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^17.2.0",
+    "@angular/cli": "^17.2.0",
+    "@angular/compiler-cli": "^17.2.0",
+    "@happy-dom/global-registrator": "^13.3.8",
+    "@types/bun": "^1.0.5",
+    "husky": "^9.1.7",
+    "typescript": "~5.3.2"
+  }
+}
