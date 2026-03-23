@@ -134,9 +134,12 @@ const app = new Elysia()
     const _db = await getDb();
     const cacheKey = getHtmlCacheKey(originalUrl);
     const cacheHit = await _db.select(cacheKey);
+    const cachedHtml = Array.isArray(cacheHit)
+      ? cacheHit[0]?.content
+      : cacheHit?.content;
 
-    if (cacheHit) {
-      return new Response(cacheHit.content, {
+    if (typeof cachedHtml === 'string' && cachedHtml.length > 0) {
+      return new Response(cachedHtml, {
         headers: {
           'Content-Type': 'text/html',
         },

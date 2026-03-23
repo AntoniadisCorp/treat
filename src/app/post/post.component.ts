@@ -2,7 +2,6 @@ import { HttpClient } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
   Component,
-  Input,
   inject,
   input,
 } from '@angular/core';
@@ -32,25 +31,6 @@ export const resolvePost = {
 
     return res;
   },
-  postOldInput: (route: ActivatedRouteSnapshot) => {
-    const res = inject(ApiService)
-      .client.id[route.params['id']].get()
-      .pipe(
-        map((test) => {
-          console.log(' ');
-          console.log('Post resolver', test);
-          console.log(' ');
-
-          if (test.error) {
-            return 'Failed to load post';
-          }
-
-          return test.data?.data;
-        })
-      );
-
-    return res;
-  },
 };
 
 @Component({
@@ -59,7 +39,6 @@ export const resolvePost = {
   imports: [ReactiveFormsModule],
   template: `
     <h1>Post</h1>
-    {{ postOldInput }}
     {{ post() }}
 
     <form [formGroup]="form" (submit)="submit()">
@@ -74,7 +53,6 @@ export default class PostComponent {
   private api = inject(HttpClient);
 
   post = input();
-  @Input('postOldInput') postOldInput!: string;
 
   title = 'treaty';
   form = fb.group({
