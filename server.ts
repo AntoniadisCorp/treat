@@ -1,6 +1,6 @@
 import '@angular/compiler';
-import './treaty-utilities/mock-create-histogram';
-import './treaty-utilities/mock-zone';
+import './utilities/mock-create-histogram';
+import './utilities/mock-zone';
 
 import { Elysia, t } from 'elysia';
 import { cors } from '@elysiajs/cors';
@@ -22,9 +22,29 @@ let db: Surreal | null = null;
 const port = process.env['PORT'] || 4201;
 const serverDistFolder = import.meta.dirname;
 
-const browserDistFolder = join(serverDistFolder, 'dist/treaty/browser');
-const indexHtml = join(serverDistFolder, 'dist/treaty/browser/index.html');
+const browserDistFolder = join(serverDistFolder, 'dist/treat/browser');
+const indexHtml = join(serverDistFolder, 'dist/treat/browser/index.html');
 let commonEngine: CommonEngine | null = null;
+
+type AppRole = 'owner' | 'admin' | 'operator' | 'viewer';
+
+type StatusEntryPoint = {
+  label: string;
+  href: string | null;
+  description: string;
+  allowed: boolean;
+};
+
+type CurrentUserStatus = {
+  authenticated: boolean;
+  role: AppRole | null;
+  user: {
+    id: string;
+    name: string | null;
+    email: string | null;
+  } | null;
+  entryPoints: StatusEntryPoint[];
+};
 
 const getDb = async () => {
   if (db) return db;
@@ -47,6 +67,66 @@ const getCommonEngine = () => {
 };
 
 const getHtmlCacheKey = (urlPath: string) => `url:${encodeURIComponent(urlPath)}`;
+
+const toDisplayRole = (role: AppRole | null) => role;
+
+const buildEntryPoints = (role: AppRole | null): StatusEntryPoint[] => {
+  const isAuthenticated = role !== null;
+  const isAdmin = role === 'owner' || role === 'admin';
+
+  return [
+    {
+      label: 'Dashboard Overview',
+      href: '/dashboard',
+      description: 'Protected operations shell and navigation.',
+      allowed: isAuthenticated,
+    },
+    {
+      label: 'Schedules',
+      href: null,
+      description: 'Planned scheduling workspace for operators and admins.',
+      allowed: isAuthenticated,
+    },
+    {
+      label: 'Notifications',
+      href: null,
+      description: 'Future notification center backed by audited events.',
+      allowed: isAuthenticated,
+    },
+    {
+      label: 'Admin Settings',
+      href: null,
+      description: 'Reserved for owner and admin workflows.',
+      allowed: isAdmin,
+    },
+  ];
+};
+
+const buildCurrentUserStatus = async (headers: Headers): Promise<CurrentUserStatus> => {
+  const betterAuthSession = await auth.api.getSession({ headers });
+
+  if (!betterAuthSession) {
+    return {
+      authenticated: false,
+      role: null,
+      user: null,
+      entryPoints: buildEntryPoints(null),
+    };
+  }
+
+  const role = toDisplayRole('viewer');
+
+  return {
+    authenticated: true,
+    role,
+    user: {
+      id: betterAuthSession.user.id,
+      name: betterAuthSession.user.name ?? null,
+      email: betterAuthSession.user.email ?? null,
+    },
+    entryPoints: buildEntryPoints(role),
+  };
+};
 
 const app = new Elysia()
   .onRequest(({ request }) => {
@@ -87,6 +167,9 @@ const app = new Elysia()
   })
   .group('/api', (api) => {
     return api
+      .get('/status', async ({ request: { headers } }) =>
+        buildCurrentUserStatus(headers)
+      )
       .get('/id/:id', ({ params: { id } }) => ({ data: `Post with id: ${id}` }))
       .get('/example', () => `just an example`)
       .post('/form', ({ body }) => body, {
@@ -131,19 +214,28 @@ const app = new Elysia()
       });
     }
 
+    const hasCookieHeader =
+      typeof headers['cookie'] === 'string' && headers['cookie'].length > 0;
+    const isDashboardRoute =
+      originalUrl === '/dashboard' || originalUrl.startsWith('/dashboard/');
+    const shouldBypassHtmlCache = hasCookieHeader || isDashboardRoute;
+
     const _db = await getDb();
     const cacheKey = getHtmlCacheKey(originalUrl);
-    const cacheHit = await _db.select(cacheKey);
-    const cachedHtml = Array.isArray(cacheHit)
-      ? cacheHit[0]?.content
-      : cacheHit?.content;
 
-    if (typeof cachedHtml === 'string' && cachedHtml.length > 0) {
-      return new Response(cachedHtml, {
-        headers: {
-          'Content-Type': 'text/html',
-        },
-      });
+    if (!shouldBypassHtmlCache) {
+      const cacheHit = await _db.select(cacheKey);
+      const cachedHtml = Array.isArray(cacheHit)
+        ? cacheHit[0]?.content
+        : cacheHit?.content;
+
+      if (typeof cachedHtml === 'string' && cachedHtml.length > 0) {
+        return new Response(cachedHtml, {
+          headers: {
+            'Content-Type': 'text/html',
+          },
+        });
+      }
     }
 
     try {
@@ -159,9 +251,11 @@ const app = new Elysia()
 
       devLog('ssr.render.done', originalUrl);
 
-      await _db.create(cacheKey, {
-        content: _html,
-      });
+      if (!shouldBypassHtmlCache) {
+        await _db.create(cacheKey, {
+          content: _html,
+        });
+      }
 
       return new Response(_html, {
         headers: {
