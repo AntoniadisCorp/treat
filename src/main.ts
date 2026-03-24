@@ -1,4 +1,4 @@
-import '../treaty-utilities/mock-zone';
+import '../utilities/mock-zone';
 
 import { bootstrapApplication } from '@angular/platform-browser';
 import { AppComponent } from './app/app.component';

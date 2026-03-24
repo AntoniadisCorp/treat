@@ -4,7 +4,7 @@ This file is the step-by-step runbook for using the prompt files in this reposit
 
 ## Purpose
 
-Use this sequence when turning the current Treaty proof of concept into the planned production system with:
+Use this sequence when turning the current Treat proof of concept into the planned production system with:
 
 - Angular dashboard UI
 - Bun + Elysia backend

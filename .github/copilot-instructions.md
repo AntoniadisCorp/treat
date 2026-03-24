@@ -1,6 +1,6 @@
-# Treaty — Copilot Instructions
+# Treat — Copilot Instructions
 
-Full-stack Angular 17 + Elysia (Bun) SSR proof-of-concept demonstrating end-to-end type safety via a custom RxJS-based Eden/Treaty client.
+Full-stack Angular 17 + Elysia (Bun) SSR proof-of-concept demonstrating end-to-end type safety via a custom RxJS-based Eden/Treat client.
 
 ## Commands
 
@@ -13,14 +13,14 @@ Full-stack Angular 17 + Elysia (Bun) SSR proof-of-concept demonstrating end-to-e
 | Build + watch | `bun run watch` |
 | Run tests | `bun test` |
 
-> **Order matters:** `bun run server.ts` requires a built app in `dist/treaty/browser/`. Always `bun run build` first.
+> **Order matters:** `bun run server.ts` requires a built app in `dist/treat/browser/`. Always `bun run build` first.
 
 ## Architecture
 
 ```
 server.ts           ← Elysia HTTP server (Bun runtime)
   └── GET /api/*    ← API routes
-  └── GET *.*       ← Static files from dist/treaty/browser/
+  └── GET *.*       ← Static files from dist/treat/browser/
   └── GET *         ← Angular SSR via CommonEngine + SurrealDB HTML cache
 
 src/
@@ -29,9 +29,9 @@ src/
     app.routes.ts   ← Routes + functional resolvers
     post/           ← Feature component (co-located resolver)
   libs/
-    edenclient/     ← Custom Eden/Treaty client (RxJS, NOT fetch/promises)
+    edenclient/     ← Custom Eden/Treat client (RxJS, NOT fetch/promises)
 
-treaty-utilities/
+utilities/
   mock-zone.ts               ← Required Zone.js shim for zoneless Angular
   mock-create-histogram.ts   ← Patches perf_hooks for Angular's profiler
   setup-tests.ts             ← Bun test environment (happy-dom + TestBed)
@@ -99,15 +99,15 @@ import { describe, test, expect, beforeEach } from 'bun:test'
 
 | File | When loaded | Purpose |
 |---|---|---|
-| `treaty-utilities/mock-create-histogram.ts` | Always (bunfig preload + server.ts import) | Patches `perf_hooks.createHistogram` stub for Angular profiler |
-| `treaty-utilities/mock-zone.ts` | main.ts + server.ts (first import) | Provides a fake `Zone` global for zoneless Angular |
-| `treaty-utilities/setup-tests.ts` | `bun test` only (bunfig test preload) | happy-dom + TestBed init |
+| `utilities/mock-create-histogram.ts` | Always (bunfig preload + server.ts import) | Patches `perf_hooks.createHistogram` stub for Angular profiler |
+| `utilities/mock-zone.ts` | main.ts + server.ts (first import) | Provides a fake `Zone` global for zoneless Angular |
+| `utilities/setup-tests.ts` | `bun test` only (bunfig test preload) | happy-dom + TestBed init |
 
 ## Notable Gotchas
 
 - **`ɵprovideZonelessChangeDetection`** is a private Angular API (v17). It will eventually become `provideZonelessChangeDetection` (no `ɵ` prefix) in a stable release.
 - **`@types/bun`** is listed in `tsconfig.app.json`'s `types` array so Angular's build sees Bun globals. Remove it if targeting Node.
-- **No Angular SSR builder** — SSR runs inside the Elysia server directly. Do not use `ng run treaty:server`.
+- **No Angular SSR builder** — SSR runs inside the Elysia server directly. Do not use `ng run treat:server`.
 - **SurrealDB is an in-memory HTML cache only** — it stores rendered Angular HTML keyed by URL. It is not a general application database.
 - **`useDefineForClassFields: false`** in tsconfig is required for Angular decorators to work correctly.
 - **`skipTests: true`** in angular.json — schematics (`ng generate`) will not create spec files automatically.
@@ -122,5 +122,5 @@ import { describe, test, expect, beforeEach } from 'bun:test'
 | [src/libs/edenclient/index.ts](../src/libs/edenclient/index.ts) | Proxy factory — how API calls become HTTP requests |
 | [src/libs/edenclient/types.ts](../src/libs/edenclient/types.ts) | Type machinery that infers the client shape from `App` |
 | [src/app/post/post.component.ts](../src/app/post/post.component.ts) | Reference implementation: OnPush, signal inputs, co-located resolver |
-| [treaty-utilities/setup-tests.ts](../treaty-utilities/setup-tests.ts) | Test environment setup — read before writing tests |
+| [utilities/setup-tests.ts](../utilities/setup-tests.ts) | Test environment setup — read before writing tests |
 | [bunfig.toml](../bunfig.toml) | Bun configuration — preloads and test setup |

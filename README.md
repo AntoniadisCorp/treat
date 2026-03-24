@@ -1,4 +1,4 @@
-# Treaty
+# Treat
 
 Is Angular in perfect harmony in the Bun runtime using Elysia.js and Surrealdb
 
@@ -9,7 +9,7 @@ Is Angular in perfect harmony in the Bun runtime using Elysia.js and Surrealdb
 
 ## Extra features
 
-- Custom elysia (eden/treaty) that uses httpClient under the hood
+- Custom elysia (eden/treat) that uses httpClient under the hood
 - It's Zoneless together with SSR
 - Server running with bun
 - Tests running with bun

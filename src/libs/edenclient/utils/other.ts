@@ -1,4 +1,4 @@
-// source https://github.com/elysiajs/eden/blob/main/src/treaty/utils.ts
+// source https://github.com/elysiajs/eden/blob/main/src/treat/utils.ts
 
 export const composePath = (
     domain: string,

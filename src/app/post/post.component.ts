@@ -54,7 +54,7 @@ export default class PostComponent {
 
   post = input();
 
-  title = 'treaty';
+  title = 'treat';
   form = fb.group({
     strField: fb.control('', Validators.required),
     numbField: fb.control<number | null>(null),

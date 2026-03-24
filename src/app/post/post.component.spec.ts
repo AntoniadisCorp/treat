@@ -19,7 +19,7 @@ describe('PostComponent', () => {
     component = fixture.componentInstance;
     // component.post = input('test');
 
-    // Could use some improved mocking of treaty here
+    // Could use some improved mocking of treat here
     (component as any).api = {
       client: {
         id: {
@@ -39,7 +39,7 @@ describe('PostComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  test(`should have as title 'treaty'`, () => {
-    expect(component.title).toEqual('treaty');
+  test(`should have as title 'treat'`, () => {
+    expect(component.title).toEqual('treat');
   });
 });

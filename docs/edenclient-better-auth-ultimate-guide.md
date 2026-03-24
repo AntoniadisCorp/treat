@@ -1,8 +1,8 @@
-# Treaty Docs Architect: Ultimate EdenClient + Better Auth Integration
+# Treat Docs Architect: Ultimate EdenClient + Better Auth Integration
 
 ## Executive Summary
 
-This document defines the recommended end-state for integrating Better Auth (with `dash()` plugin) into Treaty while preserving the project's core value proposition: end-to-end typing from Elysia route schema into Angular via the custom RxJS Eden client.
+This document defines the recommended end-state for integrating Better Auth (with `dash()` plugin) into Treat while preserving the project's core value proposition: end-to-end typing from Elysia route schema into Angular via the custom RxJS Eden client.
 
 The current system already has strong typed route inference, but it is not yet auth-aware at the transport layer. The "ultimate" version of the client should:
 
@@ -61,7 +61,7 @@ The current system already has strong typed route inference, but it is not yet a
 
 ---
 
-## What Better Auth + Elysia Docs Require (Relevant to Treaty)
+## What Better Auth + Elysia Docs Require (Relevant to Treat)
 
 1. Mount Better Auth handler on Elysia (`auth.handler`) before wildcard handlers.
 2. Keep auth routes reachable under `/api/auth/*` (default Better Auth base path).
@@ -303,4 +303,4 @@ Important for this repo:
 
 The best long-term direction is to keep your custom RxJS Eden client as the typed API transport for app-domain endpoints, while introducing Better Auth as a dedicated auth subsystem mounted in Elysia and consumed through cookie sessions.
 
-In practical terms: do not replace Eden client; evolve it into an auth-aware transport with explicit credentials behavior and normalized responses. This preserves Treaty’s strongest architectural advantage (type-safe E2E API ergonomics) while gaining production-grade authentication and infra observability via `dash()`.
+In practical terms: do not replace Eden client; evolve it into an auth-aware transport with explicit credentials behavior and normalized responses. This preserves Treat’s strongest architectural advantage (type-safe E2E API ergonomics) while gaining production-grade authentication and infra observability via `dash()`.

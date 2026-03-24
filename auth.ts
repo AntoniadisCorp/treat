@@ -2,7 +2,7 @@ import { betterAuth } from 'better-auth';
 import { dash } from '@better-auth/infra';
 
 export const auth = betterAuth({
-  appName: 'Treaty',
+  appName: 'Treat',
   baseURL: process.env['BETTER_AUTH_URL'] ?? 'http://localhost:4201',
   basePath: '/api/auth',
   secret:
