@@ -1,11 +1,22 @@
 import { Routes } from '@angular/router';
+import {
+  canActivateDashboard,
+  resolveDashboardStatus,
+} from './dashboard/dashboard.component';
 import { resolvePost } from './post/post.component';
 
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'post/1',
-    pathMatch: 'full',
+    loadComponent: () => import('./landing/landing.component'),
+  },
+  {
+    path: 'dashboard',
+    loadComponent: () => import('./dashboard/dashboard.component'),
+    canActivate: [canActivateDashboard],
+    resolve: {
+      ...resolveDashboardStatus,
+    },
   },
   {
     path: 'post/:id',
@@ -13,5 +24,9 @@ export const routes: Routes = [
     resolve: {
       ...resolvePost,
     },
+  },
+  {
+    path: '**',
+    redirectTo: '',
   },
 ];
